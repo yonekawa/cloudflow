@@ -17,12 +17,6 @@ func (t *testParallelTask) Execute() error {
 func TestParallelTask(t *testing.T) {
 	t.Parallel()
 
-	p := []Task{
-		&testParallelTask{name: "a"},
-		&testParallelTask{name: "b"},
-		&testParallelTask{name: "c"},
-	}
-
 	completeChan := make(chan bool)
 	go func() {
 		for key := range resultChan {
@@ -31,9 +25,15 @@ func TestParallelTask(t *testing.T) {
 		completeChan <- true
 	}()
 
+	p := []Task{
+		&testParallelTask{name: "a"},
+		&testParallelTask{name: "b"},
+		&testParallelTask{name: "c"},
+	}
+
 	wf := NewWorkflow()
-	wf.RegisterParallelTask("abc", p)
-	wf.RegisterTask("d", &testParallelTask{name: "d"})
+	wf.AddTask("abc", NewParallelTask(p))
+	wf.AddTask("d", &testParallelTask{name: "d"})
 	if err := wf.Run(); err != nil {
 		t.Error(err)
 	}

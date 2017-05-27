@@ -31,8 +31,8 @@ func TestWorkflow_Run(t *testing.T) {
 	runResult = make([]string, 0)
 
 	wf := NewWorkflow()
-	wf.RegisterTask("a", &testTask{name: "a"})
-	wf.RegisterTask("b", &testTask{name: "b"})
+	wf.AddTask("a", &testTask{name: "a"})
+	wf.AddTask("b", &testTask{name: "b"})
 	err := wf.Run()
 
 	if err != nil {
@@ -51,10 +51,10 @@ func TestWorkflow_Run(t *testing.T) {
 	runResult = make([]string, 0)
 
 	wf = NewWorkflow()
-	wf.RegisterTask("a", &testTask{name: "a"})
-	wf.RegisterTask("b", &testTask{name: "b"})
-	wf.RegisterTask("c", &errorTask{name: "c"})
-	wf.RegisterTask("d", &testTask{name: "d"})
+	wf.AddTask("a", &testTask{name: "a"})
+	wf.AddTask("b", &testTask{name: "b"})
+	wf.AddTask("c", &errorTask{name: "c"})
+	wf.AddTask("d", &testTask{name: "d"})
 	err = wf.Run()
 
 	if err == nil {
@@ -75,12 +75,12 @@ func TestWorkflow_Run(t *testing.T) {
 	runResult = make([]string, 0)
 
 	wf = NewWorkflow()
-	wf.RegisterTask("a", &testTask{name: "a"})
+	wf.AddTask("a", &testTask{name: "a"})
 	wf2 := NewWorkflow()
-	wf2.RegisterTask("b", &testTask{name: "b"})
-	wf2.RegisterTask("c", &testTask{name: "c"})
-	wf.RegisterTask("bc", wf2)
-	wf.RegisterTask("d", &testTask{name: "d"})
+	wf2.AddTask("b", &testTask{name: "b"})
+	wf2.AddTask("c", &testTask{name: "c"})
+	wf.AddTask("bc", wf2)
+	wf.AddTask("d", &testTask{name: "d"})
 	err = wf.Run()
 
 	if err != nil {
@@ -99,13 +99,13 @@ func TestWorkflow_Run(t *testing.T) {
 	runResult = make([]string, 0)
 
 	subFlow := NewWorkflow()
-	subFlow.RegisterTask("b", &testTask{name: "b"})
-	subFlow.RegisterTask("c", &errorTask{name: "c"})
+	subFlow.AddTask("b", &testTask{name: "b"})
+	subFlow.AddTask("c", &errorTask{name: "c"})
 
 	wf = NewWorkflow()
-	wf.RegisterTask("a", &testTask{name: "a"})
-	wf.RegisterTask("bc", subFlow)
-	wf.RegisterTask("d", &testTask{name: "d"})
+	wf.AddTask("a", &testTask{name: "a"})
+	wf.AddTask("bc", subFlow)
+	wf.AddTask("d", &testTask{name: "d"})
 	err = wf.Run()
 
 	if err == nil {
@@ -139,10 +139,10 @@ func TestWorkflow_RunFrom(t *testing.T) {
 	runFromResult = make([]string, 0)
 
 	w := NewWorkflow()
-	w.RegisterTask("a", &testFromTask{name: "a"})
-	w.RegisterTask("b", &testFromTask{name: "b"})
-	w.RegisterTask("c", &testFromTask{name: "c"})
-	w.RegisterTask("d", &testFromTask{name: "d"})
+	w.AddTask("a", &testFromTask{name: "a"})
+	w.AddTask("b", &testFromTask{name: "b"})
+	w.AddTask("c", &testFromTask{name: "c"})
+	w.AddTask("d", &testFromTask{name: "d"})
 	err := w.RunFrom("b")
 
 	if err != nil {
@@ -181,10 +181,10 @@ func TestWorkflow_RunOnly(t *testing.T) {
 	runOnlyResult = make([]string, 0)
 
 	w := NewWorkflow()
-	w.RegisterTask("a", &testOnlyTask{name: "a"})
-	w.RegisterTask("b", &testOnlyTask{name: "b"})
-	w.RegisterTask("c", &testOnlyTask{name: "c"})
-	w.RegisterTask("d", &testOnlyTask{name: "d"})
+	w.AddTask("a", &testOnlyTask{name: "a"})
+	w.AddTask("b", &testOnlyTask{name: "b"})
+	w.AddTask("c", &testOnlyTask{name: "c"})
+	w.AddTask("d", &testOnlyTask{name: "d"})
 	err := w.RunOnly("b")
 
 	if err != nil {
