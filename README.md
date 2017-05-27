@@ -10,6 +10,7 @@ Designed to running with cloud computing platform.
 Install depends libraries.
 
 ```golang
+go get github.com/aws/aws-sdk-go
 go get github.com/hashicorp/go-multierror
 ```
 
