@@ -21,10 +21,10 @@ go get github.com/yonekawa/cloudflow
 ### Define workflow
 
 ```go
-wf := NewWorkflow()
+wf := cloudflow.NewWorkflow()
 wf.RegisterTask("download", &DownloadTask{...})
 wf.RegisterTask("process", &ProcessTask{...})
-wf.RegisterParallelTask("process_parallel", NewParallelTask([]Task{&ProcessTask{}, &ProcessTask{}}))
+wf.RegisterParallelTask("process_parallel", []Task{&ProcessTask{}, &ProcessTask{}})
 wf.RegisterTask("output", &OutputTask{...})
 ```
 
