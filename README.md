@@ -1,5 +1,7 @@
 # cloudflow
 [![Build Status](https://travis-ci.org/yonekawa/cloudflow.svg?branch=master)](https://travis-ci.org/yonekawa/cloudflow)
+[![GoDoc](https://godoc.org/github.com/yonekawa/cloudflow?status.svg)](http://godoc.org/github.com/yonekawa/cloudflow)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yonekawa/cloudflow)](https://goreportcard.com/report/github.com/yonekawa/cloudflow)
 
 # Description
 cloudflow is a workflow engine written in Go.
