@@ -11,14 +11,6 @@ type Task interface {
 	Execute() error
 }
 
-// RunTask runs task.
-func RunTask(t Task) error {
-	if err := t.Execute(); err != nil {
-		return err
-	}
-	return nil
-}
-
 // ParallelTask represents parallel task on workflow.
 type ParallelTask struct {
 	tasks []Task
@@ -37,7 +29,7 @@ func (pt *ParallelTask) Execute() error {
 	for _, t := range pt.tasks {
 		wg.Add(1)
 		go func(t Task) {
-			if err := RunTask(t); err != nil {
+			if err := t.Execute(); err != nil {
 				errChan <- err
 			}
 			wg.Done()

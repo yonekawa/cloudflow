@@ -33,14 +33,9 @@ func (wf *Workflow) SetLogger(logger *log.Logger) {
 	wf.logger = logger
 }
 
-// RegisterTask add task with name.
-func (wf *Workflow) RegisterTask(name string, task Task) {
+// AddTask add task with name.
+func (wf *Workflow) AddTask(name string, task Task) {
 	wf.tasks = append(wf.tasks, &namedTask{name: name, task: task})
-}
-
-// RegisterParallelTask add parallel executing task with name.
-func (wf *Workflow) RegisterParallelTask(name string, tasks []Task) {
-	wf.RegisterTask(name, NewParallelTask(tasks))
 }
 
 // Run defined workflow tasks.
@@ -73,7 +68,7 @@ func (wf *Workflow) run(tasks []*namedTask) error {
 
 	for i, t := range tasks {
 		wf.logger.Print(fmt.Sprintf("workflow: Start task: %v", tasks[i].name))
-		if err := RunTask(t.task); err != nil {
+		if err := t.task.Execute(); err != nil {
 			return err
 		}
 		wf.logger.Print(fmt.Sprintf("workflow: Complete task: %v", tasks[i].name))

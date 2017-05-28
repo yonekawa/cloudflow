@@ -7,6 +7,7 @@ Installation
 
 Dependencies
 
+    go get github.com/aws/aws-sdk-go
     go get github.com/hashicorp/go-multierror
 */
 package cloudflow
