@@ -12,6 +12,6 @@ func TestCommandTask_Execute(t *testing.T) {
 
 	cmd = NewCommandTask("unknown-command", "foo", "bar")
 	if err := cmd.Execute(); err == nil {
-		t.Error("TestCommandTask_Execute failed: cmd does not failed")
+		t.Error("expect to fail cmd but it succeeded")
 	}
 }
