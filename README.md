@@ -63,7 +63,7 @@ import "github.com/yonekawa/cloudflow/platform/aws"
 
 sess := session.Must(session.NewSession())
 // Upload ./src files into s3:/s3-bucket/s3dst/
-task := NewS3BulkUploadTask(sess, "./src", "/s3dst", "s3-bucket")
+task := aws.NewS3BulkUploadTask(sess, "./src", "/s3dst", "s3-bucket")
 err := task.Execute()
 ```
 
@@ -75,7 +75,7 @@ import "github.com/yonekawa/cloudflow/platform/aws"
 
 sess := session.Must(session.NewSession())
 // Download s3:/s3-bucket/s3dst/ files into ./dst
-task := NewS3BulkUploadTask(sess, "/s3src", "./dst", "s3-bucket")
+task := aws.NewS3BulkUploadTask(sess, "/s3src", "./dst", "s3-bucket")
 err := task.Execute()
 ```
 
@@ -89,11 +89,27 @@ import "github.com/aws/aws-sdk-go/service/batch"
 import "github.com/yonekawa/cloudflow/platform/aws"
 
 sess := session.Must(session.NewSession())
-// Download s3:/s3-bucket/s3dst/ files into ./dst
-task := NewBatchJobTask(sess, &batch.SubmitJobInput{
+task := aws.NewBatchJobTask(sess, &batch.SubmitJobInput{
   JobDefinition: aws.String("job definition ARN"),
   JobQueue:      aws.String("job queue ARN"),
   JobName:       aws.String("job name"),
+})
+err := task.Execute()
+```
+
+### aws.LambdaInvokeTask
+
+`aws.LambdaInvokeTask` invokes lambda function.
+
+```go
+import awssdk "github.com/aws/aws-sdk-go/aws"
+import "github.com/aws/aws-sdk-go/session"
+import "github.com/aws/aws-sdk-go/service/lambda"
+import "github.com/yonekawa/cloudflow/platform/aws"
+
+sess := session.Must(session.NewSession())
+task := aws.NewLambdaInvokeTask(sess, &batch.SubmitJobInput{
+  FunctionName: awssdk.String("function ARN"),
 })
 err := task.Execute()
 ```
