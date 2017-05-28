@@ -39,7 +39,11 @@ func testBatchJobTaskSucceeded(t *testing.T, sess *session.Session) {
 		return out, nil
 	}
 
-	bjt := NewBatchJobTask(sess, &batch.SubmitJobInput{})
+	bjt := NewBatchJobTask(sess, &batch.SubmitJobInput{
+		JobDefinition: aws.String("arn:aws:batch:us-east-1:000000000000:job-definition/test-definition:1"),
+		JobQueue:      aws.String("arn:aws:batch:us-east-1:000000000000:job-queue/test-queue"),
+		JobName:       aws.String("test-job"),
+	})
 	if err := bjt.Execute(); err != nil {
 		t.Error(err)
 	}
