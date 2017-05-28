@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/batch"
 )
@@ -23,14 +24,14 @@ func TestBatchJobTask_Execute(t *testing.T) {
 func testBatchJobTaskSucceeded(t *testing.T, sess *session.Session) {
 	jobID := "TESTING"
 	submitJob = func(b *batch.Batch, input *batch.SubmitJobInput) (*batch.SubmitJobOutput, error) {
-		return &batch.SubmitJobOutput{JobId: &jobID}, nil
+		return &batch.SubmitJobOutput{JobId: aws.String(jobID)}, nil
 	}
 	status := "RUNNING"
 	describeJobs = func(b *batch.Batch, input *batch.DescribeJobsInput) (*batch.DescribeJobsOutput, error) {
 		st := status
 		detail := &batch.JobDetail{
-			JobId:        &jobID,
-			Status:       &st,
+			JobId:        aws.String(jobID),
+			Status:       aws.String(st),
 			StatusReason: nil,
 		}
 		out := &batch.DescribeJobsOutput{Jobs: []*batch.JobDetail{detail}}
@@ -47,13 +48,13 @@ func testBatchJobTaskSucceeded(t *testing.T, sess *session.Session) {
 func testBatchJobTaskTimeout(t *testing.T, sess *session.Session) {
 	jobID := "TESTING2"
 	submitJob = func(b *batch.Batch, input *batch.SubmitJobInput) (*batch.SubmitJobOutput, error) {
-		return &batch.SubmitJobOutput{JobId: &jobID}, nil
+		return &batch.SubmitJobOutput{JobId: aws.String(jobID)}, nil
 	}
 	status := "RUNNING"
 	describeJobs = func(b *batch.Batch, input *batch.DescribeJobsInput) (*batch.DescribeJobsOutput, error) {
 		detail := &batch.JobDetail{
-			JobId:        &jobID,
-			Status:       &status,
+			JobId:        aws.String(jobID),
+			Status:       aws.String(status),
 			StatusReason: nil,
 		}
 		out := &batch.DescribeJobsOutput{Jobs: []*batch.JobDetail{detail}}

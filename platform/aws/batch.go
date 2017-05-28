@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/batch"
 )
 
-var defaultTimeout = time.Minute
-var defaultPollingTime = time.Second
+var defaultTimeout = 10 * time.Minute
+var defaultPollingTime = 10 * time.Second
 
 // BatchJobTask execute AWS Batch Job.
 type BatchJobTask struct {
