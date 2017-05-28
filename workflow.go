@@ -15,11 +15,6 @@ type Workflow struct {
 	logger *log.Logger
 }
 
-type namedTask struct {
-	name string
-	task Task
-}
-
 // NewWorkflow creates a new workflow definition.
 func NewWorkflow() *Workflow {
 	return &Workflow{

@@ -32,7 +32,13 @@ import "github.com/yonekawa/cloudflow"
 wf := cloudflow.NewWorkflow()
 wf.AddTask("download", &DownloadTask{...})
 wf.AddTask("process", &ProcessTask{...})
-wf.AddTask("parallel", NewParallelTask([]Task{&ProcessTask{}, &ProcessTask{}}))
+
+// parallel execution
+pt := NewParallelTask()
+pt.AddTask("parallel-1", &ProcessTask{})
+pt.AddTask("parallel-2", &ProcessTask{})
+wf.AddTask("parallel", pt)
+
 wf.AddTask("output", &OutputTask{...})
 
 wf.Run()
