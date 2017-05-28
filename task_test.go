@@ -25,14 +25,12 @@ func TestParallelTask(t *testing.T) {
 		completeChan <- true
 	}()
 
-	p := []Task{
-		&testParallelTask{name: "a"},
-		&testParallelTask{name: "b"},
-		&testParallelTask{name: "c"},
-	}
-
 	wf := NewWorkflow()
-	wf.AddTask("abc", NewParallelTask(p))
+	pt := NewParallelTask()
+	pt.AddTask("a", &testParallelTask{name: "a"})
+	pt.AddTask("b", &testParallelTask{name: "b"})
+	pt.AddTask("c", &testParallelTask{name: "c"})
+	wf.AddTask("abc", pt)
 	wf.AddTask("d", &testParallelTask{name: "d"})
 	if err := wf.Run(); err != nil {
 		t.Error(err)

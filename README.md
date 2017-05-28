@@ -32,8 +32,17 @@ import "github.com/yonekawa/cloudflow"
 wf := cloudflow.NewWorkflow()
 wf.AddTask("download", &DownloadTask{...})
 wf.AddTask("process", &ProcessTask{...})
-wf.AddTask("parallel", NewParallelTask([]Task{&ProcessTask{}, &ProcessTask{}}))
+
+// parallel execution
+pt := NewParallelTask()
+pt.AddTask("parallel-1", &ProcessTask{})
+pt.AddTask("parallel-2", &ProcessTask{})
+wf.AddTask("parallel", pt)
+
 wf.AddTask("output", &OutputTask{...})
+
+// Show task summary
+fmt.Print(wf.Summary())
 
 wf.Run()
 wf.RunFrom("process")
@@ -95,6 +104,18 @@ task := aws.NewBatchJobTask(sess, &batch.SubmitJobInput{
   JobName:       aws.String("job name"),
 })
 err := task.Execute()
+```
+
+You can change polling interval and timeout.
+
+```go
+task := aws.NewBatchJobTask(sess, &batch.SubmitJobInput{
+  JobDefinition: aws.String("job definition ARN"),
+  JobQueue:      aws.String("job queue ARN"),
+  JobName:       aws.String("job name"),
+})
+task.PollingTime = 5 * time.Minute
+task.Timeout = 10 * time.Hour
 ```
 
 ### aws.LambdaInvokeTask
