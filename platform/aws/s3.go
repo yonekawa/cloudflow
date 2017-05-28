@@ -132,7 +132,7 @@ func (down *S3BulkDownloadTask) Execute() error {
 	list, err := listObjectsV2(svc, &s3.ListObjectsV2Input{
 		Bucket:    aws.String(down.Bucket),
 		Delimiter: aws.String("/"),
-		Prefix:    aws.String(down.S3SrcFolder),
+		Prefix:    aws.String(down.S3SrcFolder + "/"),
 	})
 	if err != nil {
 		return err
