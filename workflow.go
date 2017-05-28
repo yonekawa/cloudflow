@@ -2,7 +2,7 @@ package cloudflow
 
 import (
 	"fmt"
-
+	"reflect"
 	"strings"
 
 	"log"
@@ -33,6 +33,12 @@ func (wf *Workflow) AddTask(name string, task Task) {
 	wf.tasks = append(wf.tasks, &namedTask{name: name, task: task})
 }
 
+// Execute implement Task.Execute.
+// Workflow can be Task on other workflow definition.
+func (wf *Workflow) Execute() error {
+	return wf.Run()
+}
+
 // Run defined workflow tasks.
 func (wf *Workflow) Run() error {
 	return wf.run(wf.tasks)
@@ -45,7 +51,7 @@ func (wf *Workflow) RunFrom(name string) error {
 			return wf.run(wf.tasks[i:])
 		}
 	}
-	return fmt.Errorf("workflow: task %v not found in: %v", name, wf.buildTaskFlowSummary(wf.tasks))
+	return fmt.Errorf("workflow: task %v not found in: %v", name, wf.Summary())
 }
 
 // RunOnly runs workflow only task specified.
@@ -55,12 +61,10 @@ func (wf *Workflow) RunOnly(name string) error {
 			return wf.run(wf.tasks[i : i+1])
 		}
 	}
-	return fmt.Errorf("workflow: task %v not found in: %v", name, wf.buildTaskFlowSummary(wf.tasks))
+	return fmt.Errorf("workflow: task %v not found in: %v", name, wf.Summary())
 }
 
 func (wf *Workflow) run(tasks []*namedTask) error {
-	wf.logger.Print(fmt.Sprintf("workflow: Invoke workflow %v tasks: %v", len(tasks), wf.buildTaskFlowSummary(tasks)))
-
 	for i, t := range tasks {
 		wf.logger.Print(fmt.Sprintf("workflow: Start task: %v", tasks[i].name))
 		if err := t.task.Execute(); err != nil {
@@ -71,16 +75,34 @@ func (wf *Workflow) run(tasks []*namedTask) error {
 	return nil
 }
 
-func (wf *Workflow) buildTaskFlowSummary(tasks []*namedTask) string {
-	names := make([]string, len(tasks))
-	for i, t := range tasks {
-		names[i] = t.name
-	}
-	return strings.Join(names, "->")
+// Summary returns task flow summary.
+func (wf *Workflow) Summary() string {
+	return buildTaskSummary(wf.tasks, " -> ", true)
 }
 
-// Execute defined workflow that interface of Task.
-// Workflow can be Task on other workflow definition.
-func (wf *Workflow) Execute() error {
-	return wf.Run()
+func buildTaskSummary(tasks []*namedTask, delimiter string, showNumber bool) string {
+	names := make([]string, len(tasks))
+	for i, t := range tasks {
+		var number string
+		if showNumber {
+			number = fmt.Sprintf("%d.", i+1)
+		}
+		if w, ok := t.task.(*Workflow); ok {
+			names[i] = fmt.Sprintf("%s%s<Workflow>(%s)", number, t.name, w.Summary())
+		} else if pt, ok := t.task.(*ParallelTask); ok {
+			names[i] = fmt.Sprintf("%s%s<ParallelTask>(%s)", number, t.name, pt.Summary())
+		} else {
+
+			names[i] = fmt.Sprintf("%s%s<%s>", number, t.name, nameOfTask(t.task))
+		}
+	}
+	return strings.Join(names, delimiter)
+}
+
+func nameOfTask(task Task) string {
+	t := reflect.TypeOf(task)
+	if t.Kind() == reflect.Ptr {
+		return t.Elem().Name()
+	}
+	return t.Name()
 }

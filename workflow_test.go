@@ -1,6 +1,7 @@
 package cloudflow
 
 import (
+	"bytes"
 	"errors"
 	"testing"
 )
@@ -203,5 +204,48 @@ func TestWorkflow_RunOnly(t *testing.T) {
 	err = w.RunOnly("unknown")
 	if err == nil {
 		t.Error("workflow: workflow not raises error when task not found")
+	}
+}
+
+type summaryTask struct {
+	name string
+}
+
+func (t *summaryTask) Execute() error {
+	return nil
+}
+
+func TestWorkflow_Summary(t *testing.T) {
+	t.Parallel()
+
+	buf := bytes.NewBufferString("")
+
+	wf := NewWorkflow()
+
+	buf.WriteString("1.a<summaryTask>")
+	wf.AddTask("a", &summaryTask{})
+	buf.WriteString(" -> ")
+
+	buf.WriteString("2.b<summaryTask>")
+	wf.AddTask("b", &summaryTask{})
+	buf.WriteString(" -> ")
+
+	buf.WriteString("3.c<ParallelTask>(c1<summaryTask>, c2<summaryTask>)")
+	pt := NewParallelTask()
+	pt.AddTask("c1", &summaryTask{})
+	pt.AddTask("c2", &summaryTask{})
+	wf.AddTask("c", pt)
+	buf.WriteString(" -> ")
+
+	buf.WriteString("4.d<Workflow>(1.da<summaryTask> -> 2.db<summaryTask> -> 3.dc<summaryTask>)")
+	wf2 := NewWorkflow()
+	wf2.AddTask("da", &summaryTask{})
+	wf2.AddTask("db", &summaryTask{})
+	wf2.AddTask("dc", &summaryTask{})
+	wf.AddTask("d", wf2)
+
+	expect := buf.String()
+	if wf.Summary() != expect {
+		t.Errorf("workflow summary \ngot:   %v\nexpect:%v", wf.Summary(), expect)
 	}
 }

@@ -26,8 +26,14 @@ func NewParallelTask() *ParallelTask {
 	return &ParallelTask{tasks: make([]*namedTask, 0)}
 }
 
+// AddTask add parallel task with name
 func (pt *ParallelTask) AddTask(name string, task Task) {
 	pt.tasks = append(pt.tasks, &namedTask{name: name, task: task})
+}
+
+// Summary returns parallel task summary.
+func (pt *ParallelTask) Summary() string {
+	return buildTaskSummary(pt.tasks, ", ", false)
 }
 
 // Execute implement Task.Execute.
